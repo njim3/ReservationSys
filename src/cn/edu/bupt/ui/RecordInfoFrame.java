@@ -1,6 +1,8 @@
 package cn.edu.bupt.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -9,20 +11,28 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.Color;
 import javax.swing.SwingConstants;
 
 import cn.edu.bupt.bll.RecordInfoAction;
 import cn.edu.bupt.model.CustomerInfo;
+import cn.edu.bupt.util.ImageBase64Tool;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.swing.DefaultComboBoxModel;
 
 public class RecordInfoFrame extends JFrame {
@@ -37,7 +47,10 @@ public class RecordInfoFrame extends JFrame {
     private JTextField addressTF;
     private JLabel portraitLbl;
     
+    private boolean isModified = false;
     private String portraitStr;
+    private JFileChooser fileChooser = new JFileChooser();
+    private String fileAbsolutePath;
     
     public static void main(String[] args) {
         RecordInfoFrame frame = new RecordInfoFrame();
@@ -94,6 +107,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "身份证号不能为空！", 
                             "警告", JOptionPane.WARNING_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -107,6 +122,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "身份证号格式不正确！", 
                             "警告", JOptionPane.WARNING_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -116,6 +133,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "数据库中已有该身份证号！", 
                             "警告", JOptionPane.ERROR_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -124,8 +143,15 @@ public class RecordInfoFrame extends JFrame {
                     break;
                 }
                 
+                // 取得身份证号的第7 - 11位
+                int birthYear = Integer.parseInt(idStr.substring(6, 10));
+                ageTF.setText(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)
+                        - birthYear));
+                
                 JOptionPane.showMessageDialog(null, "身份证号验证通过", 
                         "提示", JOptionPane.INFORMATION_MESSAGE);
+                
+                
                 
                 btn.setEnabled(true);
             }
@@ -160,6 +186,9 @@ public class RecordInfoFrame extends JFrame {
         contentPane.add(label_3);
         
         ageTF = new JTextField();
+        ageTF.setBackground(Color.WHITE);
+        ageTF.setForeground(Color.BLACK);
+        ageTF.setEditable(false);
         ageTF.setFont(new Font("宋体", Font.PLAIN, 12));
         ageTF.setColumns(10);
         ageTF.setBounds(99, 123, 93, 21);
@@ -195,10 +224,44 @@ public class RecordInfoFrame extends JFrame {
         
         portraitLbl = new JLabel("无预览");
         portraitLbl.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(portraitLbl);
         portraitLbl.setFont(new Font("宋体", Font.PLAIN, 12));
-        panel.add(portraitLbl, BorderLayout.CENTER);
         
         JButton selectPortraitBtn = new JButton("选择头像");
+        selectPortraitBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JButton btn = (JButton)e.getSource();
+                
+                btn.setEnabled(false);
+                
+                FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                        "images files: jpeg/jpg/gif/png/bmp", 
+                        "jpeg", "jpg", "gif", "png", "bmp");
+                
+                fileChooser.setFileFilter(filter);
+                
+                int retVal = fileChooser.showOpenDialog(getParent());
+                
+                if (retVal == JFileChooser.APPROVE_OPTION) {
+                    btn.setEnabled(true);
+                    portraitLbl.setText("");
+                    
+                    fileAbsolutePath = fileChooser.getSelectedFile().getAbsolutePath();
+                    
+                    ImageIcon chooseFile = new ImageIcon(fileAbsolutePath);
+                    
+                    portraitLbl.setIcon(new ImageIcon(chooseFile.getImage()
+                            .getScaledInstance(portraitLbl.getBounds().width, 
+                                    portraitLbl.getBounds().height, Image.SCALE_FAST)));
+                    
+                    if (isModified == false)
+                        isModified = true;
+                    
+                } else if (retVal == JFileChooser.CANCEL_OPTION) {
+                    btn.setEnabled(true);
+                }
+            }
+        });
         selectPortraitBtn.setFont(new Font("宋体", Font.PLAIN, 12));
         selectPortraitBtn.setBounds(350, 186, 95, 25);
         contentPane.add(selectPortraitBtn);
@@ -216,6 +279,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "身份证号不能为空！", 
                             "警告", JOptionPane.WARNING_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -229,6 +294,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "身份证号格式不正确！", 
                             "警告", JOptionPane.WARNING_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -238,6 +305,8 @@ public class RecordInfoFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "数据库中已有该身份证号！", 
                             "警告", JOptionPane.ERROR_MESSAGE);
                     
+                    idTF.requestFocus();
+                    
                     btn.setEnabled(true);
                     
                     return ;
@@ -246,11 +315,18 @@ public class RecordInfoFrame extends JFrame {
                     break;
                 }
                 
+                // 取得身份证号的第7 - 11位
+                int birthYear = Integer.parseInt(idStr.substring(6, 10));
+                ageTF.setText(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)
+                        - birthYear));
+                
                 String nameStr = nameTF.getText().trim();
                 
                 if (nameStr.length() == 0) {
                     JOptionPane.showMessageDialog(null, "姓名不能为空！", 
                             "警告", JOptionPane.WARNING_MESSAGE);
+                    
+                    nameTF.requestFocus();
                     
                     btn.setEnabled(true);
                     
@@ -259,27 +335,25 @@ public class RecordInfoFrame extends JFrame {
                 
                 int sex = (maleRB.isSelected()) ? 1 : 0;
                 String ageStr = ageTF.getText().trim();
-                
-                if (ageStr.length() == 0) {
-                    JOptionPane.showMessageDialog(null, "年龄不能为空！", 
-                            "警告", JOptionPane.WARNING_MESSAGE);
-                    
-                    btn.setEnabled(true);
-                    
-                    return ;
-                }
-                
-                if (!checkAge(ageStr)) {
-                    JOptionPane.showMessageDialog(null, "年龄格式不对！", 
-                            "警告", JOptionPane.WARNING_MESSAGE);
-                    
-                    btn.setEnabled(true);
-                    
-                    return ;
-                }
-                
                 String nationStr = (String) nationCB.getSelectedItem();
                 String addressStr = addressTF.getText().trim();
+                
+                if (isModified == false || fileAbsolutePath == null ||
+                        fileAbsolutePath.equals("") || 
+                        fileAbsolutePath.length() == 0) {
+                    
+                    return ;
+                }
+                
+                portraitStr = ImageBase64Tool.image2Base64(fileAbsolutePath);
+                
+                if (portraitStr == null || portraitStr.length() == 0 ||
+                        portraitStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "头像有问题！",
+                            "警告", JOptionPane.ERROR_MESSAGE);
+                    
+                    return ;
+                }
                 
                 CustomerInfo cusInfo = new CustomerInfo(idStr, nameStr, sex, ageStr,
                         nationStr, addressStr, portraitStr);
@@ -290,6 +364,9 @@ public class RecordInfoFrame extends JFrame {
                 if (res) {
                     JOptionPane.showMessageDialog(null, "录入成功！", 
                             "提示", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    initAllComponent();
+                    
                 } else {
                     JOptionPane.showMessageDialog(null, "录入失败！", 
                             "警告", JOptionPane.ERROR_MESSAGE);
@@ -343,6 +420,21 @@ public class RecordInfoFrame extends JFrame {
         label_12.setBounds(153, 232, 21, 15);
         contentPane.add(label_12);
         setLocationRelativeTo(null);
+    }
+    
+    private void initAllComponent() {
+        idTF.setText("");
+        nameTF.setText("");
+        maleRB.setSelected(true);
+        ageTF.setText("");
+        nationCB.setSelectedIndex(0);
+        addressTF.setText("");
+        
+        portraitStr = "";
+        portraitLbl.setIcon(null);
+        portraitLbl.setText("无预览");
+        fileAbsolutePath = "";
+        isModified = false;
     }
     
     private int checkId(String aIdStr) {
