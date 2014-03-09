@@ -51,7 +51,8 @@ public class MainFrame extends JFrame {
     private JPanel checkoutPanel;
     private JPanel searchCheckinPanel;
     private List<JPanel> panelList = new ArrayList<JPanel>();
-    private JTextField textField;
+    private JTextField srRoomIdTF;
+    private JComboBox srRoomTypeCB;
     private JTable searchRoomResTable;
     private JTextField textField_1;
     private JTextField textField_2;
@@ -204,26 +205,31 @@ public class MainFrame extends JFrame {
         label_2.setBounds(66, 50, 54, 15);
         searchRoomPanel.add(label_2);
         
-        textField = new JTextField();
-        textField.setBounds(134, 47, 100, 21);
-        searchRoomPanel.add(textField);
-        textField.setColumns(10);
+        srRoomIdTF = new JTextField();
+        srRoomIdTF.setBounds(134, 47, 100, 21);
+        searchRoomPanel.add(srRoomIdTF);
+        srRoomIdTF.setColumns(10);
         
         JLabel label_3 = new JLabel("查询类型：");
         label_3.setFont(new Font("宋体", Font.PLAIN, 12));
         label_3.setBounds(54, 80, 73, 21);
         searchRoomPanel.add(label_3);
         
-        JComboBox comboBox = new JComboBox();
-        comboBox.setModel(new DefaultComboBoxModel(new String[] {"全部", "已入住", "未入住"}));
-        comboBox.setFont(new Font("宋体", Font.PLAIN, 12));
-        comboBox.setBounds(134, 78, 54, 23);
-        searchRoomPanel.add(comboBox);
+        srRoomTypeCB = new JComboBox();
+        srRoomTypeCB.setModel(new DefaultComboBoxModel(new String[] {"全部", "已入住", "未入住"}));
+        srRoomTypeCB.setFont(new Font("宋体", Font.PLAIN, 12));
+        srRoomTypeCB.setBounds(134, 78, 54, 23);
+        searchRoomPanel.add(srRoomTypeCB);
         
-        JButton btnNewButton = new JButton("查询");
-        btnNewButton.setFont(new Font("宋体", Font.PLAIN, 12));
-        btnNewButton.setBounds(272, 50, 67, 51);
-        searchRoomPanel.add(btnNewButton);
+        JButton srSearchBtn = new JButton("查询");
+        srSearchBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+        srSearchBtn.setFont(new Font("宋体", Font.PLAIN, 12));
+        srSearchBtn.setBounds(272, 50, 67, 51);
+        searchRoomPanel.add(srSearchBtn);
         
         JLabel label_4 = new JLabel("结果显示");
         label_4.setFont(new Font("宋体", Font.PLAIN, 14));

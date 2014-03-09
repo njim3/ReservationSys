@@ -52,7 +52,8 @@ public class DBOper {
                     connProperties.getProperty("username"), 
                     connProperties.getProperty("password"));
             
-            stmt = dbConn.createStatement();
+            stmt = dbConn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY);
             
             if (stmt != null)
                 System.out.println("数据库连接成功！");

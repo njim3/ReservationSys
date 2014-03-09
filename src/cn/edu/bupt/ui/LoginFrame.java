@@ -16,7 +16,6 @@ import javax.swing.JButton;
 
 import cn.edu.bupt.bll.LoginAction;
 import cn.edu.bupt.dal.DBOper;
-import cn.edu.bupt.model.Statics;
 import cn.edu.bupt.model.UserInfo;
 import cn.edu.bupt.util.SysTool;
 
