@@ -415,26 +415,34 @@ public class MainFrame extends JFrame {
         if (str == null || str.length() == 0)
             return ;
         
-        switch (str) {
-        case "欢迎界面": {
+        String[] arr = {"欢迎界面", "查询房间", "查询入住", "退房结账"};
+        int i = 0;
+        
+        for (i = 0; i < 4; ++i) {
+            if (str.equals(arr[i]))
+                break;
+        }
+        
+        switch (i) {
+        case 0: {
             
             this.contentLayeredPane.setLayer(welcomePanel, Statics.getCount());
             this.adjustLayeredPanel(0);
         }
             break;
-        case "查询房间": {
+        case 1: {
             
             this.contentLayeredPane.setLayer(searchRoomPanel, Statics.getCount());
             this.adjustLayeredPanel(1);
         }
             break;
-        case "查询入住": {
+        case 2: {
             
             this.contentLayeredPane.setLayer(searchCheckinPanel, Statics.getCount());
             this.adjustLayeredPanel(2);
         }
             break;
-        case "退房结账": {
+        case 3: {
             
             this.contentLayeredPane.setLayer(checkoutPanel, Statics.getCount());
             this.adjustLayeredPanel(3);
