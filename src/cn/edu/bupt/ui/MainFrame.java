@@ -2,6 +2,7 @@ package cn.edu.bupt.ui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,13 +22,19 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
+import cn.edu.bupt.bll.SearchRoomAction;
+import cn.edu.bupt.model.RoomInfo;
 import cn.edu.bupt.model.Statics;
 import cn.edu.bupt.model.UserInfo;
+
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -189,7 +196,7 @@ public class MainFrame extends JFrame {
         
         searchRoomPanel = new JPanel();
         searchRoomPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        contentLayeredPane.setLayer(searchRoomPanel, 2);
+        contentLayeredPane.setLayer(searchRoomPanel, 4);
         searchRoomPanel.setBounds(0, 0, 518, 335);
         contentLayeredPane.add(searchRoomPanel);
         searchRoomPanel.setLayout(null);
@@ -218,13 +225,27 @@ public class MainFrame extends JFrame {
         srRoomTypeCB = new JComboBox();
         srRoomTypeCB.setModel(new DefaultComboBoxModel(new String[] {"全部", "已入住", "未入住"}));
         srRoomTypeCB.setFont(new Font("宋体", Font.PLAIN, 12));
-        srRoomTypeCB.setBounds(134, 78, 54, 23);
+        srRoomTypeCB.setBounds(134, 78, 67, 23);
         searchRoomPanel.add(srRoomTypeCB);
         
         JButton srSearchBtn = new JButton("查询");
         srSearchBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                String srRoomIdStr = srRoomIdTF.getText().trim();
+                int srRoomTypeInt = srRoomTypeCB.getSelectedIndex();
                 
+                SearchRoomAction act = new SearchRoomAction(srRoomIdStr,
+                        srRoomTypeInt);
+                
+                DefaultTableModel dtm = act.getTableModel();
+                
+                if (dtm == null) {
+                    DefaultTableModel tableModel = 
+                            (DefaultTableModel)searchRoomResTable.getModel();
+                    
+                    tableModel.setRowCount(0);
+                } else
+                    searchRoomResTable.setModel(dtm);
             }
         });
         srSearchBtn.setFont(new Font("宋体", Font.PLAIN, 12));
@@ -240,10 +261,59 @@ public class MainFrame extends JFrame {
         scrollPane.setBounds(10, 145, 498, 180);
         searchRoomPanel.add(scrollPane);
         
+        final JPopupMenu courseTableMenu = new JPopupMenu();
+        final JMenuItem detailCourseMenuItem = new JMenuItem("入住");
+        detailCourseMenuItem.addActionListener(new ActionListener(){
+
+            public void actionPerformed(ActionEvent e) {
+                RoomInfo roomInfo = new RoomInfo(
+                        searchRoomResTable.getValueAt(searchRoomResTable.getSelectedRow(), 0).toString(),
+                        searchRoomResTable.getValueAt(searchRoomResTable.getSelectedRow(), 1).toString(),
+                        searchRoomResTable.getValueAt(searchRoomResTable.getSelectedRow(), 2).toString());
+                
+                // 将roominfo传到入住页面
+                CheckinFrame checkInFrame = new CheckinFrame(roomInfo);
+                
+                checkInFrame.setVisible(true);
+            }
+        });
+        courseTableMenu.add(detailCourseMenuItem);
+        
         searchRoomResTable = new JTable();
         searchRoomResTable.setFont(new Font("宋体", Font.PLAIN, 12));
         searchRoomResTable.setFillsViewportHeight(true);
         scrollPane.setViewportView(searchRoomResTable);
+        searchRoomResTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent event) {
+                if ((event.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
+                    Point p = event.getPoint();
+                    int row = searchRoomResTable.rowAtPoint(p);
+                    int column = searchRoomResTable.columnAtPoint(p);
+                    
+                    if (row != -1 && column != -1) {
+                        searchRoomResTable.changeSelection(row, column, false, false);
+                    }
+                }
+            }
+            
+            public void mouseReleased(MouseEvent event){
+                if((event.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
+                    Point p = event.getPoint();
+                    int row = searchRoomResTable.rowAtPoint(p);
+                    int column = searchRoomResTable.columnAtPoint(p);
+                    
+                    if (row != -1 && column != -1) {
+                        String isCheckStr = searchRoomResTable.getValueAt(
+                                searchRoomResTable.getSelectedRow(), 2).toString();
+                        if (isCheckStr.equals("0")) {
+                            // 显示右键菜单
+                            courseTableMenu.show(event.getComponent(), 
+                                    event.getX(), event.getY());
+                        }
+                    }
+                }
+            }
+        });
         
         searchCheckinPanel = new JPanel();
         contentLayeredPane.setLayer(searchCheckinPanel, 1);
