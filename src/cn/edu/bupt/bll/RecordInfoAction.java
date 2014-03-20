@@ -66,6 +66,27 @@ public class RecordInfoAction {
         return false;
     }
     
+    public boolean isIdCheckInRoom(String aIdStr) {
+        String sql = "select * from reserve where customerid='"+ aIdStr +"' " +
+        		"and money=0";
+        
+        try {
+            ResultSet res = DBOper.getInstance().query(sql);
+            
+            res.last();
+            
+            int row = res.getRow();
+            
+            if (row == 1)
+                return true;
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
     public boolean record() {
         
         String sql = this.generateSQL();

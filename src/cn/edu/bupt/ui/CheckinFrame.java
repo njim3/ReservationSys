@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Toolkit;
 import javax.swing.JLabel;
 import java.awt.Font;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -16,7 +18,16 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
 
+import cn.edu.bupt.bll.RecordInfoAction;
+import cn.edu.bupt.bll.RecordReserveAction;
+import cn.edu.bupt.model.ReserveInfo;
 import cn.edu.bupt.model.RoomInfo;
+import cn.edu.bupt.model.Statics;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class CheckinFrame extends JFrame {
 
@@ -74,6 +85,17 @@ public class CheckinFrame extends JFrame {
         contentPane.add(checkInTypeCB);
         
         JButton checkCusidBtn = new JButton("检查");
+        checkCusidBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String cusIdStr = cusIdTF.getText().trim();
+                
+                boolean res = checkCusId(cusIdStr);
+                
+                if (res)
+                    JOptionPane.showMessageDialog(null, "身份证号通过检查！", "检查", 
+                            JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
         checkCusidBtn.setBounds(249, 17, 70, 25);
         contentPane.add(checkCusidBtn);
         
@@ -94,13 +116,45 @@ public class CheckinFrame extends JFrame {
         contentPane.add(label_3);
         
         roomDespTA = new JTextArea();
-        roomDespTA.setWrapStyleWord(true);
+        roomDespTA.setLineWrap(true);
         roomDespTA.setEditable(false);
         roomDespTA.setFont(new Font("宋体", Font.PLAIN, 13));
         roomDespTA.setBounds(125, 121, 216, 105);
         contentPane.add(roomDespTA);
         
         JButton checkInBtn = new JButton("入住");
+        checkInBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String cusIdStr = cusIdTF.getText().trim();
+                
+                boolean res = checkCusId(cusIdStr);
+                
+                if (!res)
+                    return ;
+                
+                int roomType = checkInTypeCB.getSelectedIndex();
+                int roomId = Integer.parseInt(roomIdLbl.getText().trim());
+                
+                // 首先插入数据，然后再更新room表
+                ReserveInfo reserveInfo = new ReserveInfo(cusIdStr, roomId, 
+                        roomType);
+                
+                RecordReserveAction act = new RecordReserveAction(reserveInfo);
+                
+                res = act.recordInfo();
+                
+                if (!res) {
+                    JOptionPane.showMessageDialog(null, "录入失败！", "警告", 
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "录入成功！", "提示", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                    
+                    dispose();
+                }
+                
+            }
+        });
         checkInBtn.setBounds(163, 250, 70, 25);
         contentPane.add(checkInBtn);
         this.setLocationRelativeTo(null);
@@ -111,5 +165,46 @@ public class CheckinFrame extends JFrame {
     private void refreshView() {
         roomIdLbl.setText(roomInfo.getRoomId());
         roomDespTA.setText(roomInfo.getRoomDescription());
+    }
+    
+    private boolean checkCusId(String aIdStr) {
+        if (aIdStr.length() == 0) {
+            JOptionPane.showMessageDialog(null, "身份证号不能为空！", "提示", 
+                    JOptionPane.WARNING_MESSAGE);
+            
+            return false;
+        }
+        
+        if (!aIdStr.matches("^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))" +
+                "(([0|1|2]\\d)|3[0-1])\\d{4}$")) {
+            JOptionPane.showMessageDialog(null, "身份证号格式不对！", "提示", 
+                    JOptionPane.WARNING_MESSAGE);
+            
+            return false;
+        }
+        
+        // 查询数据库
+        RecordInfoAction act = new RecordInfoAction();
+        
+        boolean res = act.searchIdFromDB(aIdStr);
+        
+        if (!res) {
+            JOptionPane.showMessageDialog(null, "数据库中没有该身份证号！请先录入！", "警告", 
+                    JOptionPane.ERROR_MESSAGE);
+            
+            return false;
+        } else {
+            // 查询该customer是否已经订房
+            boolean resCheckInRoom = act.isIdCheckInRoom(aIdStr);
+            
+            if (resCheckInRoom) {
+                JOptionPane.showMessageDialog(null, "该身份证号已开房间！", "警告", 
+                        JOptionPane.ERROR_MESSAGE);
+                
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
