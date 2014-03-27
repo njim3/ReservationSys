@@ -1,9 +1,16 @@
 package cn.edu.bupt.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,9 +18,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -23,8 +33,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -34,18 +46,7 @@ import cn.edu.bupt.model.RoomInfo;
 import cn.edu.bupt.model.Statics;
 import cn.edu.bupt.model.UserInfo;
 
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.DefaultComboBoxModel;
-import java.awt.BorderLayout;
+import com.toedter.calendar.JDateChooser;
 
 public class MainFrame extends JFrame {
 
@@ -67,6 +68,8 @@ public class MainFrame extends JFrame {
     private JTextField textField_3;
     private JTextField textField_4;
     private JTable checkoutResTable;
+    private JDateChooser searchCheckinDC;
+    private JDateChooser checkoutDC;
     
     public MainFrame(UserInfo aUser) {
         this.userInfo = aUser;
@@ -196,7 +199,7 @@ public class MainFrame extends JFrame {
         
         searchRoomPanel = new JPanel();
         searchRoomPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        contentLayeredPane.setLayer(searchRoomPanel, 4);
+        contentLayeredPane.setLayer(searchRoomPanel, 2);
         searchRoomPanel.setBounds(0, 0, 518, 335);
         contentLayeredPane.add(searchRoomPanel);
         searchRoomPanel.setLayout(null);
@@ -330,12 +333,12 @@ public class MainFrame extends JFrame {
         
         JLabel label_5 = new JLabel("姓名：");
         label_5.setFont(new Font("宋体", Font.PLAIN, 12));
-        label_5.setBounds(177, 55, 47, 15);
+        label_5.setBounds(193, 55, 47, 15);
         searchCheckinPanel.add(label_5);
         
         textField_1 = new JTextField();
         textField_1.setFont(new Font("宋体", Font.PLAIN, 12));
-        textField_1.setBounds(217, 52, 102, 21);
+        textField_1.setBounds(233, 52, 102, 21);
         searchCheckinPanel.add(textField_1);
         textField_1.setColumns(10);
         
@@ -363,7 +366,7 @@ public class MainFrame extends JFrame {
         
         JLabel label_8 = new JLabel("时间：");
         label_8.setFont(new Font("宋体", Font.PLAIN, 12));
-        label_8.setBounds(177, 86, 47, 20);
+        label_8.setBounds(193, 86, 47, 20);
         searchCheckinPanel.add(label_8);
         
         JLabel label_9 = new JLabel("结果显示");
@@ -380,29 +383,17 @@ public class MainFrame extends JFrame {
         searchCheckinResTable.setFillsViewportHeight(true);
         scrollPane_1.setViewportView(searchCheckinResTable);
         
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        panel.setBounds(217, 83, 102, 23);
-        searchCheckinPanel.add(panel);
-        panel.setLayout(new BorderLayout(0, 0));
-        
-        JLabel lblNewLabel_2 = new JLabel("New label");
-        lblNewLabel_2.setFont(new Font("宋体", Font.PLAIN, 12));
-        panel.add(lblNewLabel_2, BorderLayout.CENTER);
-        
-        JButton btnNewButton_1 = new JButton("选择");
-        btnNewButton_1.setFont(new Font("宋体", Font.PLAIN, 12));
-        btnNewButton_1.setBounds(335, 83, 66, 25);
-        searchCheckinPanel.add(btnNewButton_1);
+        searchCheckinDC = new JDateChooser();
+        searchCheckinDC.setBounds(233, 83, 125, 23);
+        searchCheckinPanel.add(searchCheckinDC);
         
         JButton btnNewButton_2 = new JButton("查询");
         btnNewButton_2.setFont(new Font("宋体", Font.PLAIN, 12));
-        btnNewButton_2.setBounds(421, 50, 66, 56);
+        btnNewButton_2.setBounds(391, 50, 66, 56);
         searchCheckinPanel.add(btnNewButton_2);
         
         checkoutPanel = new JPanel();
-        contentLayeredPane.setLayer(checkoutPanel, 0);
+        contentLayeredPane.setLayer(checkoutPanel, 4);
         checkoutPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
         checkoutPanel.setBounds(0, 0, 518, 335);
         contentLayeredPane.add(checkoutPanel);
@@ -455,26 +446,14 @@ public class MainFrame extends JFrame {
         checkoutResTable.setFillsViewportHeight(true);
         scrollPane_2.setViewportView(checkoutResTable);
         
-        JPanel panel_1 = new JPanel();
-        panel_1.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-        panel_1.setBackground(Color.WHITE);
-        panel_1.setBounds(101, 87, 102, 23);
-        checkoutPanel.add(panel_1);
-        panel_1.setLayout(new BorderLayout(0, 0));
-        
-        JLabel lblNewLabel_3 = new JLabel("New label");
-        lblNewLabel_3.setFont(new Font("宋体", Font.PLAIN, 12));
-        panel_1.add(lblNewLabel_3, BorderLayout.CENTER);
-        
-        JButton button = new JButton("选择");
-        button.setFont(new Font("宋体", Font.PLAIN, 12));
-        button.setBounds(217, 85, 66, 25);
-        checkoutPanel.add(button);
-        
         JButton button_1 = new JButton("查询");
         button_1.setFont(new Font("宋体", Font.PLAIN, 12));
         button_1.setBounds(345, 54, 66, 56);
         checkoutPanel.add(button_1);
+        
+        checkoutDC = new JDateChooser();
+        checkoutDC.setBounds(101, 87, 125, 23);
+        checkoutPanel.add(checkoutDC);
         this.setLocationRelativeTo(null);
         
         this.configureTimeDis();
