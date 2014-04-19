@@ -63,13 +63,13 @@ public class MainFrame extends JFrame {
     private JTextField srRoomIdTF;
     private JComboBox srRoomTypeCB;
     private JTable searchRoomResTable;
-    private JTextField textField_1;
-    private JTextField textField_2;
+    private JTextField sciCusNameTF;
+    private JTextField sciRoomNumTF;
     private JTable searchCheckinResTable;
     private JTextField textField_3;
     private JTextField textField_4;
     private JTable checkoutResTable;
-    private JDateChooser searchCheckinDC;
+    private JDateChooser sciDateDC;
     private JDateChooser checkoutDC;
     
     public MainFrame(UserInfo aUser) {
@@ -337,33 +337,33 @@ public class MainFrame extends JFrame {
         label_5.setBounds(193, 55, 47, 15);
         searchCheckinPanel.add(label_5);
         
-        textField_1 = new JTextField();
-        textField_1.setFont(new Font("宋体", Font.PLAIN, 12));
-        textField_1.setBounds(233, 52, 102, 21);
-        searchCheckinPanel.add(textField_1);
-        textField_1.setColumns(10);
+        sciCusNameTF = new JTextField();
+        sciCusNameTF.setFont(new Font("宋体", Font.PLAIN, 12));
+        sciCusNameTF.setBounds(233, 52, 102, 21);
+        searchCheckinPanel.add(sciCusNameTF);
+        sciCusNameTF.setColumns(10);
         
         JLabel label_6 = new JLabel("房号：");
         label_6.setFont(new Font("宋体", Font.PLAIN, 12));
         label_6.setBounds(61, 55, 47, 15);
         searchCheckinPanel.add(label_6);
         
-        textField_2 = new JTextField();
-        textField_2.setFont(new Font("宋体", Font.PLAIN, 12));
-        textField_2.setColumns(10);
-        textField_2.setBounds(101, 52, 66, 21);
-        searchCheckinPanel.add(textField_2);
+        sciRoomNumTF = new JTextField();
+        sciRoomNumTF.setFont(new Font("宋体", Font.PLAIN, 12));
+        sciRoomNumTF.setColumns(10);
+        sciRoomNumTF.setBounds(101, 52, 66, 21);
+        searchCheckinPanel.add(sciRoomNumTF);
         
         JLabel label_7 = new JLabel("查询类型：");
         label_7.setFont(new Font("宋体", Font.PLAIN, 12));
         label_7.setBounds(38, 86, 66, 20);
         searchCheckinPanel.add(label_7);
         
-        JComboBox comboBox_1 = new JComboBox();
-        comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"全部", "已入住", "未入住"}));
-        comboBox_1.setFont(new Font("宋体", Font.PLAIN, 12));
-        comboBox_1.setBounds(101, 83, 66, 23);
-        searchCheckinPanel.add(comboBox_1);
+        JComboBox sciSearchTypeCB = new JComboBox();
+        sciSearchTypeCB.setModel(new DefaultComboBoxModel(new String[] {"全部", "已入住", "未入住"}));
+        sciSearchTypeCB.setFont(new Font("宋体", Font.PLAIN, 12));
+        sciSearchTypeCB.setBounds(101, 83, 66, 23);
+        searchCheckinPanel.add(sciSearchTypeCB);
         
         JLabel label_8 = new JLabel("时间：");
         label_8.setFont(new Font("宋体", Font.PLAIN, 12));
@@ -384,18 +384,18 @@ public class MainFrame extends JFrame {
         searchCheckinResTable.setFillsViewportHeight(true);
         scrollPane_1.setViewportView(searchCheckinResTable);
         
-        searchCheckinDC = new JDateChooser();
-        searchCheckinDC.getCalendarButton().addMouseListener(new MouseAdapter() {
+        sciDateDC = new JDateChooser();
+        sciDateDC.getCalendarButton().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent event) {
                 if ((event.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
                     //System.out.println("123");
-                    searchCheckinDC.setDate(null);
+                    sciDateDC.setDate(null);
                 }
             }
         });
-        searchCheckinDC.setBounds(233, 83, 125, 23);
-        for (Component c : searchCheckinDC.getComponents()) {
+        sciDateDC.setBounds(233, 83, 125, 23);
+        for (Component c : sciDateDC.getComponents()) {
             if (c instanceof JTextField) {
                 JTextField tmpTF = (JTextField)c;
                 
@@ -403,9 +403,14 @@ public class MainFrame extends JFrame {
                 tmpTF.setBackground(Color.WHITE);
             }
         }
-        searchCheckinPanel.add(searchCheckinDC);
+        searchCheckinPanel.add(sciDateDC);
         
         JButton btnNewButton_2 = new JButton("查询");
+        btnNewButton_2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // 获得查询类型
+            }
+        });
         btnNewButton_2.setFont(new Font("宋体", Font.PLAIN, 12));
         btnNewButton_2.setBounds(391, 50, 66, 56);
         searchCheckinPanel.add(btnNewButton_2);
