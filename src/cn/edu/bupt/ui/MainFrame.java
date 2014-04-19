@@ -2,6 +2,7 @@ package cn.edu.bupt.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -319,7 +320,7 @@ public class MainFrame extends JFrame {
         });
         
         searchCheckinPanel = new JPanel();
-        contentLayeredPane.setLayer(searchCheckinPanel, 1);
+        contentLayeredPane.setLayer(searchCheckinPanel, 4);
         searchCheckinPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
         searchCheckinPanel.setBounds(0, 0, 518, 335);
         contentLayeredPane.add(searchCheckinPanel);
@@ -384,7 +385,24 @@ public class MainFrame extends JFrame {
         scrollPane_1.setViewportView(searchCheckinResTable);
         
         searchCheckinDC = new JDateChooser();
+        searchCheckinDC.getCalendarButton().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if ((event.getModifiers() & InputEvent.BUTTON3_MASK) != 0) {
+                    //System.out.println("123");
+                    searchCheckinDC.setDate(null);
+                }
+            }
+        });
         searchCheckinDC.setBounds(233, 83, 125, 23);
+        for (Component c : searchCheckinDC.getComponents()) {
+            if (c instanceof JTextField) {
+                JTextField tmpTF = (JTextField)c;
+                
+                tmpTF.setEditable(false);
+                tmpTF.setBackground(Color.WHITE);
+            }
+        }
         searchCheckinPanel.add(searchCheckinDC);
         
         JButton btnNewButton_2 = new JButton("查询");
@@ -392,8 +410,15 @@ public class MainFrame extends JFrame {
         btnNewButton_2.setBounds(391, 50, 66, 56);
         searchCheckinPanel.add(btnNewButton_2);
         
+        JLabel lblNewLabel_2 = new JLabel("(右键按钮清空)");
+        lblNewLabel_2.setForeground(Color.DARK_GRAY);
+        lblNewLabel_2.setBackground(Color.WHITE);
+        lblNewLabel_2.setFont(new Font("宋体", Font.PLAIN, 10));
+        lblNewLabel_2.setBounds(290, 107, 80, 15);
+        searchCheckinPanel.add(lblNewLabel_2);
+        
         checkoutPanel = new JPanel();
-        contentLayeredPane.setLayer(checkoutPanel, 4);
+        contentLayeredPane.setLayer(checkoutPanel, 0);
         checkoutPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
         checkoutPanel.setBounds(0, 0, 518, 335);
         contentLayeredPane.add(checkoutPanel);
